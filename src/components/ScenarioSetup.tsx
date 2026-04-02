@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { UserProfile, LifePath, SimulationTenure, ScenarioOption } from "@/types/profile";
-import { ArrowLeft, Clock, Zap, Shuffle } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { UserProfile, LifePath, SimulationTenure, ScenarioOption, SimulationMode } from "@/types/profile";
+import { ArrowLeft, Clock, Zap, Shuffle, Cpu, PenLine } from "lucide-react";
 
 interface ScenarioSetupProps {
   profile: UserProfile;
   path: LifePath;
-  onStart: (tenure: SimulationTenure, scenario: ScenarioOption | null) => void;
+  onStart: (tenure: SimulationTenure, scenario: ScenarioOption | null, mode: SimulationMode, customPrompt: string) => void;
   onBack: () => void;
 }
 
