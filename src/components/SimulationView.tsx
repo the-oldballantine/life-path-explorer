@@ -31,7 +31,7 @@ const moodLabels: Record<YearEvent["mood"], string> = {
   transformative: "Turning Point",
 };
 
-const SimulationView = ({ profile, path, tenure, scenario, onBack, onRestart, onViewProfile }: SimulationViewProps) => {
+const SimulationView = ({ profile, path, tenure, scenario, simulationMode, customPrompt, onBack, onRestart, onViewProfile }: SimulationViewProps) => {
   const sim = simulations[path];
   const years = sim.years.slice(0, tenure);
 

@@ -141,12 +141,16 @@ const tenureOptions: { value: SimulationTenure; label: string; description: stri
 const ScenarioSetup = ({ profile, path, onStart, onBack }: ScenarioSetupProps) => {
   const [tenure, setTenure] = useState<SimulationTenure>(5);
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
+  const [mode, setMode] = useState<SimulationMode>("ai");
+  const [customPrompt, setCustomPrompt] = useState("");
   const scenarios = generateScenarios(profile, path);
 
   const handleStart = () => {
     const scenario = scenarios.find((s) => s.id === selectedScenario) || null;
-    onStart(tenure, scenario);
+    onStart(tenure, scenario, mode, customPrompt);
   };
+
+  const canStart = mode === "ai" || (mode === "rockandroll" && customPrompt.trim().length > 10);
 
   return (
     <div className="min-h-screen bg-background flex items-start justify-center px-4 py-12 md:py-20">
@@ -172,9 +176,73 @@ const ScenarioSetup = ({ profile, path, onStart, onBack }: ScenarioSetupProps) =
             {pathLabels[path]} — Setup
           </h1>
           <p className="text-sm text-muted-foreground">
-            Choose your simulation timeline and optionally pick a scenario to explore.
+            Choose your simulation mode, timeline, and scenario.
           </p>
         </div>
+
+        {/* Mode Selection */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground">
+            Simulation Mode
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              onClick={() => setMode("ai")}
+              className={`rounded-xl border p-5 text-left transition-all duration-200 ${
+                mode === "ai"
+                  ? "border-primary bg-primary/5"
+                  : "border-border bg-card hover:border-primary/30"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Cpu className={`h-5 w-5 ${mode === "ai" ? "text-primary" : "text-muted-foreground"}`} />
+                <p className={`text-base font-bold ${mode === "ai" ? "text-primary" : "text-foreground"}`}>
+                  AI Simulation
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Let the AI craft a detailed, personalized simulation based on your profile and selected scenario.
+              </p>
+            </button>
+            <button
+              onClick={() => setMode("rockandroll")}
+              className={`rounded-xl border p-5 text-left transition-all duration-200 ${
+                mode === "rockandroll"
+                  ? "border-primary bg-primary/5"
+                  : "border-border bg-card hover:border-primary/30"
+              }`}
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <PenLine className={`h-5 w-5 ${mode === "rockandroll" ? "text-primary" : "text-muted-foreground"}`} />
+                <p className={`text-base font-bold ${mode === "rockandroll" ? "text-primary" : "text-foreground"}`}>
+                  Rock & Roll
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Describe your own scenario — write exactly what you want to explore and we'll simulate it.
+              </p>
+            </button>
+          </div>
+        </div>
+
+        {/* Rock & Roll Custom Input */}
+        {mode === "rockandroll" && (
+          <div className="space-y-3 animate-fade-in-up">
+            <div className="flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground">
+              <PenLine className="h-3.5 w-3.5" />
+              Your Scenario
+            </div>
+            <Textarea
+              value={customPrompt}
+              onChange={(e) => setCustomPrompt(e.target.value)}
+              placeholder="Describe what you want to simulate... e.g., 'I want to see what happens if I quit my job next year and move to Goa to start a surf school while freelancing as a developer on the side...'"
+              className="min-h-[140px] bg-card border-border text-sm resize-none focus:border-primary"
+            />
+            <p className="text-xs text-muted-foreground/60">
+              Be as detailed as you want — the more context, the richer the simulation.
+            </p>
+          </div>
+        )}
 
         {/* Tenure Selection */}
         <div className="space-y-4">
@@ -202,43 +270,45 @@ const ScenarioSetup = ({ profile, path, onStart, onBack }: ScenarioSetupProps) =
           </div>
         </div>
 
-        {/* Scenario Paths */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground">
-            <Shuffle className="h-3.5 w-3.5" />
-            Scenario Paths — Optional
+        {/* Scenario Paths — only for AI mode */}
+        {mode === "ai" && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground">
+              <Shuffle className="h-3.5 w-3.5" />
+              Scenario Paths — Optional
+            </div>
+            <p className="text-xs text-muted-foreground/70">
+              Pick a specific scenario derived from your profile, or skip to run the default simulation.
+            </p>
+            <div className="grid gap-3">
+              {scenarios.map((scenario) => (
+                <button
+                  key={scenario.id}
+                  onClick={() =>
+                    setSelectedScenario(selectedScenario === scenario.id ? null : scenario.id)
+                  }
+                  className={`w-full text-left rounded-xl border p-5 transition-all duration-200 ${
+                    selectedScenario === scenario.id
+                      ? "border-primary bg-primary/5"
+                      : "border-border bg-card hover:border-primary/30"
+                  }`}
+                >
+                  <div className="space-y-1.5">
+                    <h3 className="text-sm font-semibold text-foreground">{scenario.title}</h3>
+                    <p className="text-xs text-muted-foreground">{scenario.description}</p>
+                    <p className="text-xs text-muted-foreground/70 italic">{scenario.twist}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
-          <p className="text-xs text-muted-foreground/70">
-            Pick a specific scenario derived from your profile, or skip to run the default simulation.
-          </p>
-          <div className="grid gap-3">
-            {scenarios.map((scenario) => (
-              <button
-                key={scenario.id}
-                onClick={() =>
-                  setSelectedScenario(selectedScenario === scenario.id ? null : scenario.id)
-                }
-                className={`w-full text-left rounded-xl border p-5 transition-all duration-200 ${
-                  selectedScenario === scenario.id
-                    ? "border-primary bg-primary/5"
-                    : "border-border bg-card hover:border-primary/30"
-                }`}
-              >
-                <div className="space-y-1.5">
-                  <h3 className="text-sm font-semibold text-foreground">{scenario.title}</h3>
-                  <p className="text-xs text-muted-foreground">{scenario.description}</p>
-                  <p className="text-xs text-muted-foreground/70 italic">{scenario.twist}</p>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
+        )}
 
         {/* Start Button */}
         <div className="flex justify-end pt-4">
-          <Button onClick={handleStart} className="gap-2">
+          <Button onClick={handleStart} disabled={!canStart} className="gap-2">
             <Zap className="h-4 w-4" />
-            Run {tenure}-Year Simulation
+            {mode === "rockandroll" ? "Rock & Roll" : `Run ${tenure}-Year Simulation`}
           </Button>
         </div>
       </div>
