@@ -65,6 +65,8 @@ export type LifePath = "love" | "career" | "financial" | "personal" | "alternate
 
 export type SimulationTenure = 3 | 5 | 10;
 
+export type SimulationMode = "ai" | "rockandroll";
+
 export interface ScenarioOption {
   id: string;
   title: string;

@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { UserProfile, LifePath, SimulationTenure, ScenarioOption } from "@/types/profile";
+import { UserProfile, LifePath, SimulationTenure, ScenarioOption, SimulationMode } from "@/types/profile";
 import { simulations, YearEvent } from "@/data/simulations";
 import { ArrowLeft, RotateCcw, User } from "lucide-react";
 
@@ -10,6 +10,8 @@ interface SimulationViewProps {
   path: LifePath;
   tenure: SimulationTenure;
   scenario: ScenarioOption | null;
+  simulationMode: SimulationMode;
+  customPrompt: string;
   onBack: () => void;
   onRestart: () => void;
   onViewProfile: () => void;
@@ -29,7 +31,7 @@ const moodLabels: Record<YearEvent["mood"], string> = {
   transformative: "Turning Point",
 };
 
-const SimulationView = ({ profile, path, tenure, scenario, onBack, onRestart, onViewProfile }: SimulationViewProps) => {
+const SimulationView = ({ profile, path, tenure, scenario, simulationMode, customPrompt, onBack, onRestart, onViewProfile }: SimulationViewProps) => {
   const sim = simulations[path];
   const years = sim.years.slice(0, tenure);
 
@@ -81,8 +83,21 @@ const SimulationView = ({ profile, path, tenure, scenario, onBack, onRestart, on
           <p className="text-sm text-muted-foreground">{sim.subtitle}</p>
         </div>
 
+        {/* Mode Badge */}
+        {simulationMode === "rockandroll" && customPrompt && (
+          <div
+            className="rounded-xl border border-primary/20 bg-primary/5 p-4 animate-fade-in-up"
+            style={{ animationDelay: "50ms" }}
+          >
+            <p className="text-xs font-medium tracking-[0.1em] uppercase text-primary mb-1.5">
+              Rock & Roll — Custom Scenario
+            </p>
+            <p className="text-sm text-muted-foreground italic">{customPrompt}</p>
+          </div>
+        )}
+
         {/* Scenario Badge */}
-        {scenario && (
+        {simulationMode === "ai" && scenario && (
           <div
             className="rounded-xl border border-primary/20 bg-primary/5 p-4 animate-fade-in-up"
             style={{ animationDelay: "50ms" }}
