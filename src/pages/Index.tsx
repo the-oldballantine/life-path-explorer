@@ -97,6 +97,8 @@ const Index = () => {
         path={selectedPath}
         tenure={tenure}
         scenario={scenario}
+        simulationMode={simMode}
+        customPrompt={customPrompt}
         onBack={handleBackToScenario}
         onRestart={handleRestart}
         onViewProfile={handleOpenProfile}
