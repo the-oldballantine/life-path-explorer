@@ -1,9 +1,11 @@
 import { UserProfile, LifePath } from "@/types/profile";
-import { Heart, Briefcase, Wallet, User, Shuffle } from "lucide-react";
+import { Heart, Briefcase, Wallet, User, Shuffle, UserCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PathSelectorProps {
   profile: UserProfile;
   onSelect: (path: LifePath) => void;
+  onViewProfile: () => void;
 }
 
 const paths: {
@@ -50,10 +52,23 @@ const paths: {
   },
 ];
 
-const PathSelector = ({ profile, onSelect }: PathSelectorProps) => {
+const PathSelector = ({ profile, onSelect, onViewProfile }: PathSelectorProps) => {
   return (
     <div className="min-h-screen bg-background flex items-start justify-center px-4 py-12 md:py-20">
       <div className="w-full max-w-3xl space-y-8 animate-fade-in-up">
+        {/* Profile Link */}
+        <div className="flex justify-end">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onViewProfile}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <UserCircle className="h-4 w-4 mr-1" />
+            View Profile
+          </Button>
+        </div>
+
         {/* Header */}
         <div className="text-center space-y-3">
           <div className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.2em] uppercase text-muted-foreground">
