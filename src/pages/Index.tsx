@@ -24,9 +24,11 @@ const Index = () => {
     setPhase("scenarioSetup");
   };
 
-  const handleScenarioStart = (t: SimulationTenure, s: ScenarioOption | null) => {
+  const handleScenarioStart = (t: SimulationTenure, s: ScenarioOption | null, mode: SimulationMode, prompt: string) => {
     setTenure(t);
     setScenario(s);
+    setSimMode(mode);
+    setCustomPrompt(prompt);
     setPhase("simulation");
   };
 
@@ -34,6 +36,7 @@ const Index = () => {
     setPhase("pathSelection");
     setSelectedPath(null);
     setScenario(null);
+    setCustomPrompt("");
   };
 
   const handleBackToScenario = () => {
