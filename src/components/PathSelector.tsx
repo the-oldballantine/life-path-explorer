@@ -4,6 +4,7 @@ import { Heart, Briefcase, Wallet, User, Shuffle } from "lucide-react";
 interface PathSelectorProps {
   profile: UserProfile;
   onSelect: (path: LifePath) => void;
+  onViewProfile: () => void;
 }
 
 const paths: {
