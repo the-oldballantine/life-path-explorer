@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserProfile, defaultProfile, LifePath, AppPhase, SimulationTenure, ScenarioOption } from "@/types/profile";
+import { UserProfile, defaultProfile, LifePath, AppPhase, SimulationTenure, ScenarioOption, SimulationMode } from "@/types/profile";
 import OnboardingFlow from "@/components/onboarding/OnboardingFlow";
 import PathSelector from "@/components/PathSelector";
 import ScenarioSetup from "@/components/ScenarioSetup";
@@ -12,6 +12,8 @@ const Index = () => {
   const [selectedPath, setSelectedPath] = useState<LifePath | null>(null);
   const [tenure, setTenure] = useState<SimulationTenure>(5);
   const [scenario, setScenario] = useState<ScenarioOption | null>(null);
+  const [simMode, setSimMode] = useState<SimulationMode>("ai");
+  const [customPrompt, setCustomPrompt] = useState<string>("");
 
   const handleOnboardingComplete = () => {
     setPhase("pathSelection");
