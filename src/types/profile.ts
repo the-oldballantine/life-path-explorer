@@ -63,4 +63,13 @@ export const defaultProfile: UserProfile = {
 
 export type LifePath = "love" | "career" | "financial" | "personal" | "alternate";
 
-export type AppPhase = "onboarding" | "pathSelection" | "simulation";
+export type SimulationTenure = 3 | 5 | 10;
+
+export interface ScenarioOption {
+  id: string;
+  title: string;
+  description: string;
+  twist: string;
+}
+
+export type AppPhase = "onboarding" | "pathSelection" | "scenarioSetup" | "simulation" | "profile";
