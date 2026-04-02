@@ -52,7 +52,7 @@ const paths: {
   },
 ];
 
-const PathSelector = ({ profile, onSelect }: PathSelectorProps) => {
+const PathSelector = ({ profile, onSelect, onViewProfile }: PathSelectorProps) => {
   return (
     <div className="min-h-screen bg-background flex items-start justify-center px-4 py-12 md:py-20">
       <div className="w-full max-w-3xl space-y-8 animate-fade-in-up">
