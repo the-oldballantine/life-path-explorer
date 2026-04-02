@@ -1,5 +1,6 @@
 import { UserProfile, LifePath } from "@/types/profile";
-import { Heart, Briefcase, Wallet, User, Shuffle } from "lucide-react";
+import { Heart, Briefcase, Wallet, User, Shuffle, UserCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PathSelectorProps {
   profile: UserProfile;
