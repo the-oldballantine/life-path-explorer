@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { UserProfile, LifePath, SimulationTenure, ScenarioOption } from "@/types/profile";
+import { UserProfile, LifePath, SimulationTenure, ScenarioOption, SimulationMode } from "@/types/profile";
 import { simulations, YearEvent } from "@/data/simulations";
 import { ArrowLeft, RotateCcw, User } from "lucide-react";
 
@@ -10,6 +10,8 @@ interface SimulationViewProps {
   path: LifePath;
   tenure: SimulationTenure;
   scenario: ScenarioOption | null;
+  simulationMode: SimulationMode;
+  customPrompt: string;
   onBack: () => void;
   onRestart: () => void;
   onViewProfile: () => void;
