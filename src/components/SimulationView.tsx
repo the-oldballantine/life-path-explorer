@@ -83,8 +83,21 @@ const SimulationView = ({ profile, path, tenure, scenario, simulationMode, custo
           <p className="text-sm text-muted-foreground">{sim.subtitle}</p>
         </div>
 
+        {/* Mode Badge */}
+        {simulationMode === "rockandroll" && customPrompt && (
+          <div
+            className="rounded-xl border border-primary/20 bg-primary/5 p-4 animate-fade-in-up"
+            style={{ animationDelay: "50ms" }}
+          >
+            <p className="text-xs font-medium tracking-[0.1em] uppercase text-primary mb-1.5">
+              Rock & Roll — Custom Scenario
+            </p>
+            <p className="text-sm text-muted-foreground italic">{customPrompt}</p>
+          </div>
+        )}
+
         {/* Scenario Badge */}
-        {scenario && (
+        {simulationMode === "ai" && scenario && (
           <div
             className="rounded-xl border border-primary/20 bg-primary/5 p-4 animate-fade-in-up"
             style={{ animationDelay: "50ms" }}
