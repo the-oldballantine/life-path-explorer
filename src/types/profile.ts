@@ -74,4 +74,4 @@ export interface ScenarioOption {
   twist: string;
 }
 
-export type AppPhase = "onboarding" | "pathSelection" | "scenarioSetup" | "simulation" | "profile";
+export type AppPhase = "auth" | "onboarding" | "pathSelection" | "scenarioSetup" | "loading" | "simulation" | "profile";

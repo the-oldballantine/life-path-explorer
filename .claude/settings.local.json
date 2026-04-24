@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(curl -s 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBoHHr97vThTa8tmH6Nh-DECiS655vHkBY' -H 'Content-Type: application/json' -d '{:*)"
+    ]
+  }
+}

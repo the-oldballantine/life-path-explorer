@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String     @id @default(cuid())
+  email      String     @unique
+  password   String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  profile    Profile?
+  narratives Narrative[]
+}
+
+model Profile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name              String
+  age               String
+  gender            String
+  location          String
+  schooling         String
+  college           String
+  degree            String
+  workStatus        String
+  industry          String
+  yearsExperience   String
+  familyStructure   String
+  financialCondition String
+  familyRelationship String
+  personality       String
+  riskAppetite      String
+  decisionStyle     String
+  discipline        String
+  interests         String
+  hobbies           String
+  relationshipStatus String
+  lifeGoals         String
+  currentChallenges String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Narrative {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  path       String   // love, career, financial, personal, alternate
+  mode       String   // ai, custom
+  tenure     Int      // 3, 5, or 10 years
+  scenario   String?  // optional scenario description
+  title      String
+  subtitle   String
+  summary    String
+  years      String   // JSON string of YearEvent[]
+  createdAt  DateTime @default(now())
+}

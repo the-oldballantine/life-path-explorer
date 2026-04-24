@@ -2,7 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { UserProfile, LifePath, SimulationTenure, ScenarioOption, SimulationMode } from "@/types/profile";
-import { simulations, YearEvent } from "@/data/simulations";
+import { SimulationData, YearEvent } from "@/data/simulations";
+import { simulations } from "@/data/simulations";
 import { ArrowLeft, RotateCcw, User } from "lucide-react";
 
 interface SimulationViewProps {
@@ -12,6 +13,7 @@ interface SimulationViewProps {
   scenario: ScenarioOption | null;
   simulationMode: SimulationMode;
   customPrompt: string;
+  narrative?: SimulationData | null;
   onBack: () => void;
   onRestart: () => void;
   onViewProfile: () => void;
@@ -31,9 +33,26 @@ const moodLabels: Record<YearEvent["mood"], string> = {
   transformative: "Turning Point",
 };
 
-const SimulationView = ({ profile, path, tenure, scenario, simulationMode, customPrompt, onBack, onRestart, onViewProfile }: SimulationViewProps) => {
-  const sim = simulations[path];
-  const years = sim.years.slice(0, tenure);
+const SimulationView = ({ profile, path, tenure, scenario, simulationMode, customPrompt, narrative, onBack, onRestart, onViewProfile }: SimulationViewProps) => {
+  // Use the generated narrative if provided, otherwise fall back to static simulations
+  const sim: SimulationData = narrative || simulations[path];
+  const years = sim.years?.slice?.(0, tenure) || [];
+
+  // Guard against invalid simulation data
+  if (!sim || !sim.years || !Array.isArray(sim.years) || sim.years.length === 0) {
+    console.error('Invalid simulation data received:', sim);
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4 max-w-md">
+          <h2 className="text-2xl font-bold text-foreground">Simulation Error</h2>
+          <p className="text-sm text-muted-foreground">
+            Unable to load simulation data. This could be due to a corrupted cache or generation issue.
+          </p>
+          <Button onClick={onBack}>Back to Setup</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-start justify-center px-4 py-12 md:py-20">
@@ -73,9 +92,16 @@ const SimulationView = ({ profile, path, tenure, scenario, simulationMode, custo
 
         {/* Header */}
         <div className="animate-fade-in-up space-y-4">
-          <div className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.2em] uppercase text-muted-foreground">
-            <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-            {tenure}-Year Simulation Active
+          <div className="flex items-center justify-between">
+            <div className="inline-flex items-center gap-2 text-xs font-medium tracking-[0.2em] uppercase text-muted-foreground">
+              <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+              {tenure}-Year Simulation Active
+            </div>
+            {narrative && (
+              <div className="text-xs font-medium px-2 py-1 bg-primary/10 text-primary rounded">
+                {simulationMode === "ai" ? "✨ AI Generated" : "Custom Scenario"}
+              </div>
+            )}
           </div>
           <h1 className="text-2xl md:text-3xl font-bold text-foreground">
             {profile.name}'s {sim.title}

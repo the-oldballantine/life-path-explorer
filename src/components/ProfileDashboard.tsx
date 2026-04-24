@@ -5,8 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserProfile, LifePath } from "@/types/profile";
-import { ArrowLeft, Pencil, Save, X, Play } from "lucide-react";
+import { ArrowLeft, Pencil, Save, X, Play, LogOut, Eye, Clock } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -15,11 +16,28 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+export interface NarrativeHistoryItem {
+  id: string;
+  path: string;
+  mode: string;
+  tenure: number;
+  scenario: string | null;
+  title: string;
+  subtitle: string;
+  summary: string;
+  years: string;
+  createdAt: string;
+}
+
 interface ProfileDashboardProps {
   profile: UserProfile;
   onUpdate: (profile: UserProfile) => void;
   onSimulate: (path: LifePath) => void;
   onBack: () => void;
+  onLogout?: () => void;
+  onReplay?: (narrative: NarrativeHistoryItem) => void;
+  narratives?: NarrativeHistoryItem[];
+  isLoadingNarratives?: boolean;
 }
 
 interface FieldDef {
@@ -102,7 +120,7 @@ const quickPaths: { id: LifePath; label: string }[] = [
   { id: "alternate", label: "Alternate" },
 ];
 
-const ProfileDashboard = ({ profile, onUpdate, onSimulate, onBack }: ProfileDashboardProps) => {
+const ProfileDashboard = ({ profile, onUpdate, onSimulate, onBack, onLogout, onReplay, narratives = [], isLoadingNarratives = false }: ProfileDashboardProps) => {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<UserProfile>(profile);
 
@@ -130,23 +148,36 @@ const ProfileDashboard = ({ profile, onUpdate, onSimulate, onBack }: ProfileDash
             <ArrowLeft className="h-4 w-4 mr-1" />
             Back
           </Button>
-          {editing ? (
-            <div className="flex gap-2">
-              <Button variant="ghost" size="sm" onClick={handleCancel}>
-                <X className="h-4 w-4 mr-1" />
-                Cancel
+          <div className="flex items-center gap-2">
+            {editing ? (
+              <>
+                <Button variant="ghost" size="sm" onClick={handleCancel}>
+                  <X className="h-4 w-4 mr-1" />
+                  Cancel
+                </Button>
+                <Button size="sm" onClick={handleSave}>
+                  <Save className="h-4 w-4 mr-1" />
+                  Save Changes
+                </Button>
+              </>
+            ) : (
+              <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
+                <Pencil className="h-4 w-4 mr-1" />
+                Edit Profile
               </Button>
-              <Button size="sm" onClick={handleSave}>
-                <Save className="h-4 w-4 mr-1" />
-                Save Changes
+            )}
+            {onLogout && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onLogout}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4 mr-1" />
+                Logout
               </Button>
-            </div>
-          ) : (
-            <Button variant="outline" size="sm" onClick={() => setEditing(true)}>
-              <Pencil className="h-4 w-4 mr-1" />
-              Edit Profile
-            </Button>
-          )}
+            )}
+          </div>
         </div>
 
         <div className="space-y-3">
@@ -201,6 +232,57 @@ const ProfileDashboard = ({ profile, onUpdate, onSimulate, onBack }: ProfileDash
             </div>
           </div>
         ))}
+
+        {/* Narrative History */}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold text-foreground">Simulation History</h2>
+          {isLoadingNarratives ? (
+            <div className="text-sm text-muted-foreground">Loading...</div>
+          ) : narratives.length === 0 ? (
+            <p className="text-sm text-muted-foreground/70 italic">No simulations yet. Try a path above!</p>
+          ) : (
+            <div className="grid gap-3">
+              {narratives.map((n) => (
+                <Card
+                  key={n.id}
+                  className="cursor-pointer hover:border-primary/30 transition-colors"
+                  onClick={() => onReplay?.(n)}
+                >
+                  <CardHeader className="py-3">
+                    <div className="flex items-start justify-between">
+                      <div className="space-y-0.5">
+                        <CardTitle className="text-sm font-medium">{n.title}</CardTitle>
+                        <CardDescription className="text-xs">{n.subtitle}</CardDescription>
+                      </div>
+                      <Button variant="ghost" size="sm" className="flex-shrink-0" onClick={(e) => { e.stopPropagation(); onReplay?.(n); }}>
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="py-0">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground mb-1">
+                      <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-5">
+                        {n.path}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5">
+                        {n.mode === "rockandroll" ? "Custom" : "AI"}
+                      </Badge>
+                      <span>{n.tenure}y</span>
+                      <Clock className="h-3 w-3" />
+                      <span>{new Date(n.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    {n.scenario && (
+                      <p className="text-xs text-muted-foreground">
+                        &ldquo;{n.scenario.slice(0, 60)}&rdquo;
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
 
         <Separator className="bg-border/50" />
 
